@@ -45,7 +45,7 @@ class MqttClient:
 
     def on_connect(self, client, userdata, flags, rc, properties=None):
         print(
-            f"[{flags['session present']}]-> broker Locket [mqtt] connecte. status: {rc}"
+            f"[{flags['session present']}]-> broker presence2 [mqtt] connecte. status: {rc}"
         )
         client.subscribe("#", qos=2)
 

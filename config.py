@@ -2,7 +2,7 @@ from dotenv import load_dotenv
 
 import deps
 
-load_dotenv(dotenv_path="./plugins/locket/.env")
+load_dotenv(dotenv_path="./plugins/presence/.env")
 
 
 class MQTTConfig:

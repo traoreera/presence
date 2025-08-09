@@ -1,29 +1,10 @@
+from fasthtml.common import (H2, H3, Button, Div, Form, I, Input,  # noqa: F403
+                             Label, Link, Main, Meta, Option, P, Script,
+                             Section, Select, Span, Table, Tbody, Th, Thead,
+                             Tr)
+
 from core.composants import *  # noqa: F403
 from deps import AllPage
-from fasthtml.common import (  # noqa: F403
-    H2,
-    H3,
-    Button,
-    Div,
-    Form,
-    I,
-    Input,
-    Label,
-    Link,
-    Main,
-    Meta,
-    Option,
-    P,
-    Script,
-    Section,
-    Select,
-    Span,
-    Table,
-    Tbody,
-    Th,
-    Thead,
-    Tr,
-)
 
 
 class Home:

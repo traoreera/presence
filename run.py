@@ -9,7 +9,7 @@ class OPTIONS:
     from .crud.cards import CardCruds
     from .crud.events import EventCard
     from .crud.locket import LocketCruds
-    from .task.locket import MqCmd, clientMq
+    from .task.presence import MqCmd, clientMq
 
     CRUD: LocketCruds = LocketCruds()
     CARD: CardCruds = CardCruds()
