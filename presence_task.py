@@ -18,14 +18,13 @@ metadata = {
 
 
 def service_main(service):
-    print("Service mqtt feelback demarrer")
+    print("Service mqtt Presence demarrer")
     while service.running:
         try:
             time.sleep(1)
             clientMq.loopMqttServerListener()
         except Exception as e:
-            print(f"error as found {e}")
-            print("existing brocker servise ...")
+            print(f"existing brocker servise ... {e}")
             service.running = False
     clientMq.stop()
-    print("Service mqtt feelback arret")
+    print("Service mqtt Presence arret")

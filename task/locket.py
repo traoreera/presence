@@ -26,12 +26,6 @@ class LocketCmd:
         if types == "pub":
             return f"{base}/{user_id}"
 
-    def msg_add(self, msg: str):
-        return f"{self.CARDADD}{msg}"
-
-    def removeCard(self, msg: str):
-        return f"{self.CARDREMOVE}{msg}"
-
 
 class MqttClient:
 
@@ -76,8 +70,8 @@ class MqttClient:
                         MqCmd.uq_user_topic_cmds(content[0], "cmd", content[1]),
                         MqCmd.CLOSE,
                     )
-        else:
-            print(f"{content} => {msg.payload.decode()}")
+
+        print(f"{content} => {msg.payload.decode()}")
 
     def publish(self, topic: str, msg: str):
         self.client.publish(topic, msg)
@@ -100,9 +94,6 @@ class MqttClient:
         self.publish(MqCmd.uq_user_topic_cmds(topic, "cmd", user_id), MqCmd.STATUS)
 
 
-try:
-    clientMq = MqttClient()
-except Exception as e:
-    print(f"error detecting in mqtt {e}")
-    clientMq = None
+# try:
+clientMq = MqttClient()
 MqCmd = LocketCmd()

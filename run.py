@@ -3,14 +3,13 @@ from fasthtml.common import APIRouter, Request
 from . import schemas
 from .models import locket  # noqa: F401
 from .page.pages import Home
-from .task.locket import clientMq
 
 
 class OPTIONS:
     from .crud.cards import CardCruds
     from .crud.events import EventCard
     from .crud.locket import LocketCruds
-    from .task.locket import MqCmd
+    from .task.locket import MqCmd, clientMq
 
     CRUD: LocketCruds = LocketCruds()
     CARD: CardCruds = CardCruds()
@@ -20,11 +19,11 @@ class OPTIONS:
 
 
 PLUGIN_INFO = {
-    "name": "presence",
+    "name": "Presence",
     "version": "1.0.0",
     "author": "traore Eliezer",
     "Api_prefix": "/app/presence",
-    "tag_for_identified": ["Plugin", "locket"],
+    "tag_for_identified": ["Plugin", "Presence"],
     "trigger": 2,
 }
 
@@ -33,17 +32,14 @@ router = APIRouter(
 )
 
 
-class LocketRouter:
+class PresenceTpeRoute:
 
     def __init__(self):
         pass
 
-    @router(
-        "/add",
-        methods=["POST"],
-    )
+    @router("/add", methods=["POST"], name="addPresence")
     # @deps.user_validation
-    def addLocket(session, request: Request, topic: str, nom: str):
+    def addPresence(session, request: Request, topic: str, nom: str):
         """
         Adds a locket to the system using the provided session, request, topic, and label.
 
@@ -74,9 +70,9 @@ class LocketRouter:
                 "message": "An error occurred while adding the locket.",
             }
 
-    @router("/delete/{locket_id}", methods=["DELETE"])
+    @router("/delete/{locket_id}", methods=["DELETE"], name="deletePresence")
     # @deps.user_validation
-    def deleteLocket(session, request: Request, locket_id: str):
+    def deletePresence(session, request: Request, locket_id: str):
         try:
             OPTIONS.CRUD.remove(
                 locket=schemas.DelLocket(
@@ -91,28 +87,32 @@ class LocketRouter:
                 "message": "An error occurred while deleting the locket.",
             }
 
-    @router("/rfid/{locket_id}", methods=["POST"])
+    @router("/rfid/{locket_id}", methods=["POST"], name="VerifiedUserPresence")
     # #@deps.user_validation
-    def openLocket(session, request: Request, locket_id: str, actif: bool = True):
-        try:
-            return {
-                "status": "success",
-                "message": f"Locket  has been {'opened' if actif else 'closed'} successfully",
-            }
-        except Exception:
-            return {
-                "status": "error",
-                "message": "An error occurred while opening the locket.",
-            }
+    def VerifiedUserPresence(
+        session, request: Request, locket_id: str, actif: bool = True
+    ):
+        OPTIONS.clientMq.publish(
+            topic=OPTIONS.MQCMD.uq_user_topic_cmds(
+                base=OPTIONS.CRUD.get_by_id(locket_id)["topic"],
+                types="cmd",
+                user_id=session["user_id"],
+            ),
+            msg=OPTIONS.MQCMD.STATUS,
+        )
+        return {
+            "status": "success",
+            "message": f"Locket presence updated to {'active' if actif else 'inactive'}",
+        }
 
-    @router("/{locket_id}/reset", methods=["GET"])
+    @router("/{locket_id}/reset", methods=["GET"], name="resetPresenceTpe")
     # #@deps.user_validation
-    def resetLocket(session, request: Request, locket_id: str):
+    def resetPresenceTpe(session, request: Request, locket_id: str):
         try:
             locket = OPTIONS.CRUD.get_by_id(locket_id)
             if not locket:
                 return {"status": "error", "message": "Locket not found."}
-            clientMq.publish(
+            OPTIONS.clientMq.publish(
                 topic=OPTIONS.MQCMD.uq_user_topic_cmds(
                     base=locket["topic"], types="cmd", user_id=session["user_id"]
                 ),
@@ -129,12 +129,12 @@ class LocketRouter:
             }
 
 
-class CartsRouter:
+class PresenceCardRoute:
 
     def __init__(self):
         pass
 
-    @router("/add/card", methods=["POST"])
+    @router("/add/card", methods=["POST"], name="addCard Presence")
     # #@deps.user_validation
     def addCard(
         session,
@@ -163,7 +163,7 @@ class CartsRouter:
             )
             if categorie == "Master_card":
                 if locket:
-                    clientMq.publish(
+                    OPTIONS.clientMq.publish(
                         topic=OPTIONS.MQCMD.uq_user_topic_cmds(
                             base=locket["topic"],
                             types="cmd",
@@ -187,7 +187,7 @@ class CartsRouter:
             )
             print(f"Card removed: {card_information}")
             if card_information:
-                clientMq.publish(
+                OPTIONS.clientMq.publish(
                     topic=OPTIONS.MQCMD.uq_user_topic_cmds(
                         base=OPTIONS.CRUD.get_by_id(card_information[1])["topic"],
                         types="cmd",
@@ -213,14 +213,14 @@ class CartsRouter:
             )
             if topic:
                 if actif == "False":
-                    clientMq.publish(
+                    OPTIONS.clientMq.publish(
                         topic=OPTIONS.MQCMD.uq_user_topic_cmds(
                             base=topic, types="cmd", user_id=session["user_id"]
                         ),
                         msg=OPTIONS.MQCMD.removeCard(uid),
                     )
                 else:
-                    clientMq.publish(
+                    OPTIONS.clientMq.publish(
                         topic=OPTIONS.MQCMD.uq_user_topic_cmds(
                             base=topic, types="cmd", user_id=session["user_id"]
                         ),
@@ -229,10 +229,9 @@ class CartsRouter:
 
             return {"status": "success", "message": f"Card status updated to {actif}"}
         except Exception as e:
-            print(f"E: {e}")
             return {
                 "status": "error",
-                "message": "An error occurred while updating the card status.",
+                "message": f"An error occurred while updating the card status.{e}",
             }
 
 
@@ -258,7 +257,7 @@ class HistoryRouter:
             }
 
 
-class Plugin(LocketRouter, CartsRouter, HistoryRouter):
+class Plugin(PresenceTpeRoute, PresenceCardRoute, HistoryRouter):
 
     def __init__(
         self,
