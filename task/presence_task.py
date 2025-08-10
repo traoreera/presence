@@ -3,37 +3,37 @@ import time
 from plugins.presence.run import OPTIONS
 
 metadata = {
-    "title": "presence mqtt",
+    "title": "locket mqtt",
     "description": """
         This service listens to MQTT messages related to
-        presence operations and processes them accordingly.
+        locket operations and processes them accordingly.
         The service will listen to MQTT messages related
-        to presence operations and processes them accordingly.
-        It will listen to MQTT messages related to presence
+        to locket operations and processes them accordingly.
+        It will listen to MQTT messages related to locket
         operations and processes them accordingly.
     """,
     "version": "1.0.0",
     "author": "Tanga Group",
     "type": "service",
     "module": "plugins",
-    "moduleDir": "plugins/presence",
+    "moduleDir": "plugins/locket",
     "status": True,
     "dependencies": ["mqtt"],
     "license": "MIT",
     "tags": ["mqtt", "service", "plugins"],
     "icon": "mdi:message-text",
-    "homepage": "app/presence",
-    "documentation": "http://app.tangagroup.com/docs/presence",
-    "repository": "http://app.tangagroup.com/repo/presence",
-    "issues": "http://app.tangagroup.com/issues/presence",
-    "changelog": "http://app.tangagroup.com/changelog/presence",
-    "support": "http://app.tangagroup.com/support/presence",
+    "homepage": "app/locket",
+    "documentation": "http://app.tangagroup.com/docs/locket",
+    "repository": "http://app.tangagroup.com/repo/locket",
+    "issues": "http://app.tangagroup.com/issues/locket",
+    "changelog": "http://app.tangagroup.com/changelog/locket",
+    "support": "http://app.tangagroup.com/support/locket",
     "contact": {
         "email": "contact@tangagroup.com",
         "website": "http://app.tangagroup.com",
         "phone": "+1234567890",
     },
-    "keywords": ["mqtt", "presence", "service", "plugins"],
+    "keywords": ["mqtt", "locket", "service", "plugins"],
     "created_at": "2023-10-01T00:00:00Z",
     "updated_at": "2023-10-01T00:00:00Z",
     "license_url": "http://app.tangagroup.com/license",
@@ -41,14 +41,14 @@ metadata = {
 
 
 def service_main(service):
-    print("Service mqtt Presence demarrer")
+    print("Service mqtt locket demarrer")
     while service.running:
         try:
             OPTIONS.clientMq.loopMqttServerListener()
         except Exception as e:
-            print(f"Error in MQTT loop: {e}")
+            print(f"Error in presence MQTT loop: {e}")
         time.sleep(1)  # Sleep to prevent tight loop in case of errors
-    print("Service mqtt Presence arreter")
+    print("Service mqtt locket arreter")
     OPTIONS.clientMq.stop()
     print("MQTT client disconnected")
     return True

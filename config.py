@@ -9,4 +9,5 @@ class MQTTConfig:
     BROKER_URL = deps.os.getenv("BROKER_URL")
     USERNAME = deps.os.getenv("USERNAME")
     PASSWORD = deps.os.getenv("PASSWORD")
+    CLIENT_ID = deps.os.getenv("CLIENT_ID")
     BROKER_PORT = 8883

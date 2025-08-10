@@ -22,9 +22,9 @@ class LocketCmd:
     def uq_user_topic_cmds(self, base: str, types: str, user_id: str):
 
         if types == "cmd":
-            return f"{base}/{user_id}{self.CMD}"
+            return f"{base}/3040/v1/{user_id}{self.CMD}"
         if types == "pub":
-            return f"{base}/{user_id}"
+            return f"{base}/3040/v1/{user_id}"
 
 
 class MqttClient:
@@ -51,27 +51,33 @@ class MqttClient:
 
     def on_message(self, client, userdata, msg):
         content = msg.topic.split("/")
-        if len(content) == 3:
-            print(f"{content} => {msg.payload.decode()}")
-            if content[-1] == "0x3306":
-                if msg.payload.decode() == "online":
-                    print("user online")
-                print(f"Received message on topic {msg.topic}: {msg.payload.decode()}")
-                # Handle the message as needed
-                print(f"Message content: {msg.payload.decode()}")
-                response = OPTIONS.CARD.get_user_acess(content[1], msg.payload.decode())
+
+        if len(content) == 4:
+            if content[1] == "3040":
+                print(f"presence => {content} => {msg.payload.decode()}")
+
+                if content[-1] == "0x3306":
+                    if msg.payload.decode() == "online":
+                        print("user online")
+                    print(
+                        f"Received message on topic {msg.topic}: {msg.payload.decode()}"
+                    )
+                    # Handle the message as needed
+                    print(f"Message content: {msg.payload.decode()}")
+
+                response = OPTIONS.CARD.get_user_acess(content[3], msg.payload.decode())
                 if response:
                     self.publish(
-                        MqCmd.uq_user_topic_cmds(content[0], "cmd", content[1]),
+                        MqCmd.uq_user_topic_cmds(content[0], "cmd", content[3]),
                         MqCmd.OPEN,
                     )
                 else:
                     self.publish(
-                        MqCmd.uq_user_topic_cmds(content[0], "cmd", content[1]),
+                        MqCmd.uq_user_topic_cmds(content[0], "cmd", content[3]),
                         MqCmd.CLOSE,
                     )
 
-        print(f"{content} => {msg.payload.decode()}")
+            print(f"{content} => {msg.payload.decode()}")
 
     def publish(self, topic: str, msg: str):
         self.client.publish(topic, msg)
