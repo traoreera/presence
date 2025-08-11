@@ -1,3 +1,4 @@
+import deps
 from fasthtml.common import APIRouter, Request
 
 from . import schemas
@@ -38,7 +39,7 @@ class PresenceTpeRoute:
         pass
 
     @router("/add", methods=["POST"], name="addPresence")
-    # @deps.user_validation
+    @deps.user_validation
     def addPresence(session, request: Request, topic: str, nom: str):
         """
         Adds a locket to the system using the provided session, request, topic, and label.
@@ -71,7 +72,7 @@ class PresenceTpeRoute:
             }
 
     @router("/delete/{locket_id}", methods=["DELETE"], name="deletePresence")
-    # @deps.user_validation
+    @deps.user_validation
     def deletePresence(session, request: Request, locket_id: str):
         try:
             OPTIONS.CRUD.remove(
@@ -88,7 +89,7 @@ class PresenceTpeRoute:
             }
 
     @router("/rfid/{locket_id}", methods=["POST"], name="VerifiedUserPresence")
-    # #@deps.user_validation
+    @deps.user_validation
     def VerifiedUserPresence(
         session, request: Request, locket_id: str, actif: bool = True
     ):
@@ -106,7 +107,7 @@ class PresenceTpeRoute:
         }
 
     @router("/{locket_id}/reset", methods=["GET"], name="resetPresenceTpe")
-    # #@deps.user_validation
+    @deps.user_validation
     def resetPresenceTpe(session, request: Request, locket_id: str):
         try:
             locket = OPTIONS.CRUD.get_by_id(locket_id)
@@ -135,7 +136,7 @@ class PresenceCardRoute:
         pass
 
     @router("/add/card", methods=["POST"], name="addCard Presence")
-    # #@deps.user_validation
+    @deps.user_validation
     def addCard(
         session,
         request: Request,
@@ -179,7 +180,7 @@ class PresenceCardRoute:
             }
 
     @router("/delete/card/{card_id}", methods=["DELETE"])
-    # #@deps.user_validation
+    @deps.user_validation
     def deleteCard(session, request: Request, card_id: str):
         try:
             response, card_information = OPTIONS.CARD.remove(
@@ -203,7 +204,7 @@ class PresenceCardRoute:
             }
 
     @router("/status/card/{card_id}", methods=["POST"])
-    # #@deps.user_validation
+    @deps.user_validation
     def updateCardStatus(session, request: Request, card_id: str, actif: str):
         try:
             response, topic, uid = OPTIONS.CARD.update_status(
@@ -241,7 +242,7 @@ class HistoryRouter:
         pass
 
     @router("/history/delete/{history_id}", methods=["DELETE"])
-    # #@deps.user_validation
+    @deps.user_validation
     def history(session, request: Request, history_id: str):
 
         if OPTIONS.HISTORY.delete_by_id(
@@ -266,15 +267,14 @@ class Plugin(PresenceTpeRoute, PresenceCardRoute, HistoryRouter):
         return
 
     @router("/", methods=["GET"])
-    # ##@deps.user_validation
+    @deps.user_validation
+    @deps.user_validation
     def run(session, request: Request):
-        session["user_id"] = "bc523c62-6d38-49f1-9741-124886"
         return OPTIONS.HOME.page()
 
     @router("/init", methods=["GET"])
-    def initialization(
-        session,
-    ):
+    @deps.user_validation
+    def initialization(session, request):
         try:
             locket_response = OPTIONS.CRUD.get(
                 locket=schemas.GetLocket(user_id=session["user_id"])
@@ -298,7 +298,7 @@ class Plugin(PresenceTpeRoute, PresenceCardRoute, HistoryRouter):
             }
 
     @router("/history", methods=["GET"])
-    # @deps.user_validation
+    @deps.user_validation
     def history(session, request: Request):
         try:
             return {
