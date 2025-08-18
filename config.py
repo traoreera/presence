@@ -2,7 +2,7 @@ from dotenv import load_dotenv
 
 import deps
 
-load_dotenv(dotenv_path="./plugins/presence/.env")
+load_dotenv("./plugins/presence/.env", override=True, verbose=True)
 
 
 class MQTTConfig:

@@ -1,8 +1,14 @@
 import deps
 
 from ..models.locket import Locket, RFIDCards
-from ..schemas import (AddCartEvents, AddRfidCard, CardEventType, DeleteCard,
-                       GetCard, UpdateCardStatus)
+from ..schemas import (
+    AddCartEvents,
+    AddRfidCard,
+    CardEventType,
+    DeleteCard,
+    GetCard,
+    UpdateCardStatus,
+)
 from .events import EventCard
 
 

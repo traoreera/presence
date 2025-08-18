@@ -70,10 +70,10 @@ class RFIDCards(deps.Base):
         primary_key=True,
     )
     user_id = deps.Column(
-        deps.String, deps.ForeignKey("locket.id"), nullable=False, index=True
+        deps.String, deps.ForeignKey("users.id"), nullable=False, index=True
     )
     locket_id = deps.Column(
-        deps.String, deps.ForeignKey("locket.id"), nullable=False, index=True
+        deps.String, deps.ForeignKey("presenceCarte.id"), nullable=False, index=True
     )
     uid = deps.Column(deps.String, nullable=False)  # UID de la carte RFID
     label = deps.Column(deps.String, nullable=True)

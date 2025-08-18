@@ -1,43 +1,7 @@
+import json
 import time
 
 from plugins.presence.run import OPTIONS
-
-metadata = {
-    "title": "presence mqtt",
-    "description": """
-        This service listens to MQTT messages related to
-        presence operations and processes them accordingly.
-        The service will listen to MQTT messages related
-        to presence operations and processes them accordingly.
-        It will listen to MQTT messages related to presence
-        operations and processes them accordingly.
-    """,
-    "version": "1.0.0",
-    "author": "Tanga Group",
-    "type": "service",
-    "module": "plugins",
-    "moduleDir": "plugins/presence",
-    "status": True,
-    "dependencies": ["mqtt"],
-    "license": "MIT",
-    "tags": ["mqtt", "service", "plugins"],
-    "icon": "mdi:message-text",
-    "homepage": "app/presence",
-    "documentation": "http://app.tangagroup.com/docs/presence",
-    "repository": "http://app.tangagroup.com/repo/presence",
-    "issues": "http://app.tangagroup.com/issues/presence",
-    "changelog": "http://app.tangagroup.com/changelog/presence",
-    "support": "http://app.tangagroup.com/support/presence",
-    "contact": {
-        "email": "contact@tangagroup.com",
-        "website": "http://app.tangagroup.com",
-        "phone": "+1234567890",
-    },
-    "keywords": ["mqtt", "presence", "service", "plugins"],
-    "created_at": "2023-10-01T00:00:00Z",
-    "updated_at": "2023-10-01T00:00:00Z",
-    "license_url": "http://app.tangagroup.com/license",
-}
 
 
 def service_main(service):
@@ -52,3 +16,26 @@ def service_main(service):
     OPTIONS.clientMq.stop()
     print("MQTT client disconnected")
     return True
+
+
+def new_feedback_remove():
+    print("new_feelback_remove")
+
+
+with open("./plugins/presence/config.json") as f:
+    config = json.load(f)
+    metadata = config
+try:
+    metadata["con"] = [
+        {
+            "func": new_feedback_remove,
+            "name": "feedback label changing by contab ",
+            "misfire_grace_time": 100,
+            "interval": "cron",
+            "minutes": 2,
+            "activate": True,
+            "cron_params": {"day": "*", "month": "*", "hour": "0", "minute": "0"},
+        },
+    ]
+except Exception as e:
+    print(e)

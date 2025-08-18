@@ -100,6 +100,5 @@ class MqttClient:
         self.publish(MqCmd.uq_user_topic_cmds(topic, "cmd", user_id), MqCmd.STATUS)
 
 
-# try:
 clientMq = MqttClient()
 MqCmd = LocketCmd()
